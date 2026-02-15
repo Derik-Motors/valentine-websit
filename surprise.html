@@ -22,7 +22,7 @@ body{
   left:0;
   width:100%;
   height:100%;
-  background:url("image/bg.jpg") no-repeat center center;
+  background:url("bg.jpg") no-repeat center center;
   background-size:cover;
   z-index:-2;
 }
@@ -116,7 +116,6 @@ h1{
   max-width:320px;
 }
 
-/* 🔥 CLOSE BUTTON STYLE */
 .close-btn{
   position:absolute;
   top:10px;
@@ -125,10 +124,6 @@ h1{
   cursor:pointer;
   font-weight:bold;
   color:#ff2e70;
-}
-
-.close-btn:hover{
-  color:red;
 }
 
 input{
@@ -160,7 +155,7 @@ button{
   background:black;
   color:white;
   overflow-y:auto;
-  padding:25px 15px;
+  padding:40px 20px;
 }
 
 .viewer-content{
@@ -180,7 +175,8 @@ button{
   gap:10px;
 }
 
-.image-grid img{
+.image-grid img,
+.image-grid video{
   width:100%;
   border-radius:10px;
 }
@@ -194,19 +190,6 @@ button{
   color:white;
   width:100%;
 }
-.viewer{
-  display:none;
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background:black;
-  color:white;
-  overflow-y:auto;
-  padding:40px 20px;
-}
-
 </style>
 </head>
 
@@ -227,9 +210,7 @@ button{
 <!-- MODAL -->
 <div class="modal" id="questionModal">
   <div class="modal-content">
-    <!-- ✅ CLOSE BUTTON -->
     <span class="close-btn" onclick="closeModal()">✖</span>
-
     <h3 id="questionText"></h3>
     <input type="text" id="answerInput" placeholder="Type your answer">
     <button onclick="checkAnswer()">Submit</button>
@@ -252,16 +233,16 @@ let currentGift = 0;
 let isSpecial = false;
 
 const giftsData = [
- {q:"Ennoda date of birth enna?", a:"08/12/2003", img:"image/image 2.jpeg", msg:"Maadu  😍"},
- {q:"Namma first meet panna place?", a:"school", img:"image/image 3.jpeg", msg:"That day changed my life 💕"},
- {q:"En favorite color?", a:"black", img:"image/image 4.jpeg", msg:"Black like my love 😎"},
- {q:"En Ku Pudicha Chocolate?", a:"kitkat", img:"image/image 5.jpeg", msg:"Only you know it ❤️"},
- {q:"En favorite food?", a:"biryani", img:"image/image 6.jpeg", msg:"Food + You 😋"},
- {q:"Nama Ponna First Outing Date Epo?", a:"30/04/2024", img:"image/image 7.jpeg", msg:"One day with you 💖"},
- {q:"Nama Ponna First Movie Name Enna?", a:"sweetheart", img:"image/image 8.jpeg", msg:"Best movie memory 💘"},
- {q:"Nama First Ponna Outing Place enga?", a:"kanniyakumari", img:"image/image 9.jpeg", msg:"Beautiful trip 💝"},
- {q:"Namma Love anniversary month?", a:"december", img:"image/image 12.jpeg", msg:"Best month ever 💞"},
- {q:"Enaku nee enna?", a:"everything", img:"image/image 5.jpeg", msg:"You are my world 🌎❤️"}
+ {q:"Ennoda date of birth enna?", a:"08/12/2003", video:"image 1.mp4", msg:"Maadu 😍"},
+ {q:"Namma first meet panna place?", a:"school", img:"image 3.jpeg", msg:"That day changed my life 💕"},
+ {q:"En favorite color?", a:"black", img:"image 4.jpeg", msg:"Black like my love 😎"},
+ {q:"En Ku Pudicha Chocolate?", a:"kitkat", img:"image 5.jpeg", msg:"Only you know it ❤️"},
+ {q:"En favorite food?", a:"biryani", img:"image 6.jpeg", msg:"Food + You 😋"},
+ {q:"Nama Ponna First Outing Date Epo?", a:"30/04/2024", img:"image 7.jpeg", msg:"One day with you 💖"},
+ {q:"Nama Ponna First Movie Name Enna?", a:"sweetheart", img:"image 8.jpeg", msg:"Best movie memory 💘"},
+ {q:"Nama First Ponna Outing Place enga?", a:"kanniyakumari", img:"image 9.jpeg", msg:"Beautiful trip 💝"},
+ {q:"Namma Love anniversary month?", a:"december", img:"image 12.jpeg", msg:"Best month ever 💞"},
+ {q:"Enaku nee enna?", a:"everything", img:"image 5.jpeg", msg:"You are my world 🌎❤️"}
 ];
 
 const container = document.getElementById("giftContainer");
@@ -298,22 +279,35 @@ function checkAnswer(){
     if(userAns==="romba"){
       openSpecialViewer();
     } else {
-      alert("Wrong answer Di Loosu 😜");
+      alert("Wrong answer 😜");
     }
   } else {
     if(userAns===giftsData[currentGift].a.toLowerCase()){
       openViewer();
     } else {
-      alert("Wrong answer  Di Loosu 😜");
+      alert("Wrong answer 😜");
     }
   }
 }
 
 function openViewer(){
   closeModal();
-  document.getElementById("viewerMsg").innerText=giftsData[currentGift].msg;
-  document.getElementById("viewerMedia").innerHTML=
-  `<img src="${giftsData[currentGift].img}">`;
+
+  let data = giftsData[currentGift];
+
+  document.getElementById("viewerMsg").innerText = data.msg;
+  document.getElementById("loveText").innerHTML = "";
+
+  if(data.video){
+    document.getElementById("viewerMedia").innerHTML =
+    `<video controls autoplay>
+       <source src="${data.video}" type="video/mp4">
+     </video>`;
+  } else {
+    document.getElementById("viewerMedia").innerHTML =
+    `<img src="${data.img}">`;
+  }
+
   document.getElementById("viewer").style.display="block";
 }
 
@@ -324,31 +318,18 @@ function openSpecialViewer(){
 
   document.getElementById("loveText").innerHTML = `
   My love ❤️<br><br>
-
-  From the moment you came into my life, everything changed beautifully.
-  You are not just my girlfriend, you are my best friend,
-  my peace, my happiness, and my biggest blessing. 💕
-
-  When I see your smile, my whole world becomes brighter.
-  When you are sad, my heart feels heavy.
-  I promise to stand beside you in every situation —
-  in happiness, in pain, in success, and in struggle.
-
-  I don’t just love you for today,
-  I love you for tomorrow,
-  and for every single day of my life.
-
-  You are my forever. 💖
-  You are my always. 💞
-  You are my everything. 🌍❤️
+  You are my peace, my happiness and my forever.
+  I promise to love you today, tomorrow and always.
+  You are my world 🌍❤️
   `;
 
-  document.getElementById("viewerMedia").innerHTML=
-  `<img src="image/spl.png">
-   <img src="image/spl 1.png">`;
+  document.getElementById("viewerMedia").innerHTML =
+  `<img src="spl.png">
+   <img src="spl 1.png">`;
 
   document.getElementById("viewer").style.display="block";
 }
+
 function goBack(){
   document.getElementById("viewer").style.display="none";
   document.getElementById("viewerMedia").innerHTML="";
