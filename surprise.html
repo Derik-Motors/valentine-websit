@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valentine Surprise 💖</title>
+
+<style>
+*{box-sizing:border-box;}
+
+body{
+  margin:0;
+  font-family:'Segoe UI';
+  text-align:center;
+  color:white;
+  overflow-x:hidden;
+}
+
+/* Background */
+.bg-wrapper{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:url("image/bg.jpg") no-repeat center center;
+  background-size:cover;
+  z-index:-2;
+}
+
+.overlay{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.55);
+  z-index:-1;
+}
+
+h1{
+  padding:20px;
+  font-size:22px;
+}
+
+/* TOP HEARTS */
+.container{
+  display:grid;
+  grid-template-columns:repeat(5,80px);
+  gap:25px;
+  justify-content:center;
+  margin-top:30px;
+}
+
+@media(max-width:768px){
+  .container{
+    grid-template-columns:repeat(3,70px);
+    gap:20px;
+  }
+  .gift{
+    width:70px;
+  }
+}
+
+.gift{
+  width:80px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.gift:hover{
+  transform:scale(1.2);
+}
+
+/* SPL HEART */
+.special-wrapper{
+  margin:40px 0;
+}
+
+.special-heart{
+  font-size:90px;
+  cursor:pointer;
+  animation:beat 1s infinite;
+}
+
+@keyframes beat{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.2);}
+  100%{transform:scale(1);}
+}
+
+.spl-text{
+  margin-top:8px;
+  font-size:16px;
+}
+
+/* MODAL */
+.modal{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.7);
+  justify-content:center;
+  align-items:center;
+}
+
+.modal-content{
+  position:relative;
+  background:white;
+  color:black;
+  padding:25px;
+  border-radius:20px;
+  width:90%;
+  max-width:320px;
+}
+
+/* 🔥 CLOSE BUTTON STYLE */
+.close-btn{
+  position:absolute;
+  top:10px;
+  right:15px;
+  font-size:22px;
+  cursor:pointer;
+  font-weight:bold;
+  color:#ff2e70;
+}
+
+.close-btn:hover{
+  color:red;
+}
+
+input{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  border-radius:10px;
+  border:1px solid #ccc;
+}
+
+button{
+  margin-top:15px;
+  padding:10px;
+  width:100%;
+  background:#ff2e70;
+  border:none;
+  border-radius:20px;
+  color:white;
+}
+
+/* VIEWER */
+.viewer{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:black;
+  color:white;
+  overflow-y:auto;
+  padding:25px 15px;
+}
+
+.viewer-content{
+  max-width:500px;
+  margin:auto;
+}
+
+.love-text{
+  font-size:16px;
+  line-height:1.7;
+  margin:20px 0;
+}
+
+.image-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(100px,1fr));
+  gap:10px;
+}
+
+.image-grid img{
+  width:100%;
+  border-radius:10px;
+}
+
+.back-btn{
+  margin-top:25px;
+  padding:10px;
+  background:#ff2e70;
+  border:none;
+  border-radius:20px;
+  color:white;
+  width:100%;
+}
+.viewer{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:black;
+  color:white;
+  overflow-y:auto;
+  padding:40px 20px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="bg-wrapper"></div>
+<div class="overlay"></div>
+
+<h1>Happy Valentine's Day Sottayoo 💖</h1>
+
+<div class="container" id="giftContainer"></div>
+
+<div class="special-wrapper">
+  <div class="special-heart" onclick="openSpecial()">💖</div>
+  <div class="spl-text">Tap this Special Heart 💘</div>
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="questionModal">
+  <div class="modal-content">
+    <!-- ✅ CLOSE BUTTON -->
+    <span class="close-btn" onclick="closeModal()">✖</span>
+
+    <h3 id="questionText"></h3>
+    <input type="text" id="answerInput" placeholder="Type your answer">
+    <button onclick="checkAnswer()">Submit</button>
+  </div>
+</div>
+
+<!-- VIEWER -->
+<div class="viewer" id="viewer">
+  <div class="viewer-content">
+    <h2 id="viewerMsg"></h2>
+    <div class="love-text" id="loveText"></div>
+    <div class="image-grid" id="viewerMedia"></div>
+    <button class="back-btn" onclick="goBack()">Back 💖</button>
+  </div>
+</div>
+
+<script>
+
+let currentGift = 0;
+let isSpecial = false;
+
+const giftsData = [
+ {q:"Ennoda date of birth enna?", a:"08/12/2003", img:"image/image 2.jpeg", msg:"Maadu  😍"},
+ {q:"Namma first meet panna place?", a:"school", img:"image/image 3.jpeg", msg:"That day changed my life 💕"},
+ {q:"En favorite color?", a:"black", img:"image/image 4.jpeg", msg:"Black like my love 😎"},
+ {q:"En Ku Pudicha Chocolate?", a:"kitkat", img:"image/image 5.jpeg", msg:"Only you know it ❤️"},
+ {q:"En favorite food?", a:"biryani", img:"image/image 6.jpeg", msg:"Food + You 😋"},
+ {q:"Nama Ponna First Outing Date Epo?", a:"30/04/2024", img:"image/image 7.jpeg", msg:"One day with you 💖"},
+ {q:"Nama Ponna First Movie Name Enna?", a:"sweetheart", img:"image/image 8.jpeg", msg:"Best movie memory 💘"},
+ {q:"Nama First Ponna Outing Place enga?", a:"kanniyakumari", img:"image/image 9.jpeg", msg:"Beautiful trip 💝"},
+ {q:"Namma Love anniversary month?", a:"december", img:"image/image 12.jpeg", msg:"Best month ever 💞"},
+ {q:"Enaku nee enna?", a:"everything", img:"image/image 5.jpeg", msg:"You are my world 🌎❤️"}
+];
+
+const container = document.getElementById("giftContainer");
+
+for(let i=0;i<giftsData.length;i++){
+  let img = document.createElement("img");
+  img.src="https://cdn-icons-png.flaticon.com/512/833/833472.png";
+  img.className="gift";
+  img.onclick=()=>openQuestion(i,false);
+  container.appendChild(img);
+}
+
+function openQuestion(index,special){
+  currentGift=index;
+  isSpecial=special;
+  document.getElementById("questionText").innerText=
+    special ? "Enna evalo pudikum?" : giftsData[index].q;
+  document.getElementById("answerInput").value="";
+  document.getElementById("questionModal").style.display="flex";
+}
+
+function closeModal(){
+  document.getElementById("questionModal").style.display="none";
+}
+
+function openSpecial(){
+  openQuestion(0,true);
+}
+
+function checkAnswer(){
+  let userAns=document.getElementById("answerInput").value.toLowerCase().trim();
+
+  if(isSpecial){
+    if(userAns==="romba"){
+      openSpecialViewer();
+    } else {
+      alert("Wrong answer Di Loosu 😜");
+    }
+  } else {
+    if(userAns===giftsData[currentGift].a.toLowerCase()){
+      openViewer();
+    } else {
+      alert("Wrong answer  Di Loosu 😜");
+    }
+  }
+}
+
+function openViewer(){
+  closeModal();
+  document.getElementById("viewerMsg").innerText=giftsData[currentGift].msg;
+  document.getElementById("viewerMedia").innerHTML=
+  `<img src="${giftsData[currentGift].img}">`;
+  document.getElementById("viewer").style.display="block";
+}
+
+function openSpecialViewer(){
+  closeModal();
+
+  document.getElementById("viewerMsg").innerText="I LOVE YOU AMMUVE ❤️";
+
+  document.getElementById("loveText").innerHTML = `
+  My love ❤️<br><br>
+
+  From the moment you came into my life, everything changed beautifully.
+  You are not just my girlfriend, you are my best friend,
+  my peace, my happiness, and my biggest blessing. 💕
+
+  When I see your smile, my whole world becomes brighter.
+  When you are sad, my heart feels heavy.
+  I promise to stand beside you in every situation —
+  in happiness, in pain, in success, and in struggle.
+
+  I don’t just love you for today,
+  I love you for tomorrow,
+  and for every single day of my life.
+
+  You are my forever. 💖
+  You are my always. 💞
+  You are my everything. 🌍❤️
+  `;
+
+  document.getElementById("viewerMedia").innerHTML=
+  `<img src="image/spl.png">
+   <img src="image/spl 1.png">`;
+
+  document.getElementById("viewer").style.display="block";
+}
+function goBack(){
+  document.getElementById("viewer").style.display="none";
+  document.getElementById("viewerMedia").innerHTML="";
+  document.getElementById("viewerMsg").innerText="";
+  document.getElementById("loveText").innerHTML="";
+}
+
+</script>
+
+</body>
+</html>
